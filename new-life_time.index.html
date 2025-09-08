@@ -1,0 +1,799 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>令師歡喜，臨終無悔</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700&display=swap');
+
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            background: radial-gradient(ellipse at bottom, #1B2735 0%, #090A0F 100%);
+            height: 100vh;
+            overflow: hidden;
+            color: white;
+            transition: background-color 5s ease-in-out;
+        }
+
+        .stars {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image:
+                radial-gradient(2px 2px at 20px 30px, #eee, rgba(0,0,0,0)),
+                radial-gradient(2px 2px at 40px 70px, #fff, rgba(0,0,0,0)),
+                radial-gradient(2px 2px at 150px 100px, #ddd, rgba(0,0,0,0)),
+                radial-gradient(2px 2px at 100px 120px, #fff, rgba(0,0,0,0));
+            background-repeat: repeat;
+            background-size: 200px 200px;
+            animation: twinkle 15s linear infinite;
+        }
+
+        @keyframes twinkle {
+            0% {
+                background-position: 0 0;
+            }
+            100% {
+                background-position: -200px -200px;
+            }
+        }
+
+        /* 計時器外框發光動畫 */
+        .timer-glow {
+            box-shadow: 0 0 15px 5px rgba(255, 0, 0, 0.5), 0 0 30px 10px rgba(255, 0, 0, 0.3);
+            transition: box-shadow 0.5s ease-in-out;
+        }
+
+        .timer-glow-soft {
+            animation: pulse-soft 2s infinite alternate;
+        }
+
+        .timer-glow-strong {
+            animation: pulse-strong 1s infinite alternate;
+        }
+
+        @keyframes pulse-soft {
+            from { box-shadow: 0 0 10px 3px rgba(255, 0, 0, 0.3); }
+            to { box-shadow: 0 0 20px 6px rgba(255, 0, 0, 0.6); }
+        }
+
+        @keyframes pulse-strong {
+            from { box-shadow: 0 0 20px 5px #ff0000; }
+            to { box-shadow: 0 0 40px 10px #ff0000; }
+        }
+
+        /* 警語輪播動畫 */
+        .warning-fade-in {
+            animation: fadeIn 1s forwards;
+        }
+
+        .warning-fade-out {
+            animation: fadeOut 1s forwards;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeOut {
+            from { opacity: 1; transform: translateY(0); }
+            to { opacity: 0; transform: translateY(-10px); }
+        }
+
+        /* 晚睡彈窗動畫 */
+        .punishment-popup {
+            animation: shake 0.3s cubic-bezier(.36,.07,.19,.97) both infinite;
+            transform: translate3d(0, 0, 0);
+            backface-visibility: hidden;
+            perspective: 1000px;
+        }
+
+        @keyframes shake {
+            10%, 90% { transform: translate3d(-1px, 0, 0); }
+            20%, 80% { transform: translate3d(2px, 0, 0); }
+            30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
+            40%, 60% { transform: translate3d(4px, 0, 0); }
+        }
+
+        /* 最終畫面效果 */
+        .final-message-glow {
+            color: #fff;
+            text-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px #e60073, 0 0 40px #e60073, 0 0 50px #e60073, 0 0 60px #e60073, 0 0 70px #e60073;
+            animation: final-glow 2s infinite alternate;
+        }
+
+        @keyframes final-glow {
+            from { text-shadow: 0 0 5px #fff, 0 0 10px #f3e5ab; }
+            to { text-shadow: 0 0 15px #fff, 0 0 25px #f3e5ab; }
+        }
+
+        /* 設定彈窗 */
+        .modal {
+            transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+            transform: scale(0.95);
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .modal.open {
+            opacity: 1;
+            transform: scale(1);
+            pointer-events: all;
+        }
+
+        /* 自訂震動效果 */
+        .screen-shake-light {
+            animation: screen-shake 0.5s ease-out;
+        }
+
+        @keyframes screen-shake {
+            0% { transform: translate(1px, 1px) rotate(0deg); }
+            100% { transform: translate(0, 0) rotate(0deg); }
+        }
+
+        /* 遺憾清單樣式 */
+        .regret-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            transition: opacity 0.3s ease;
+        }
+
+        .regret-item:last-child {
+            border-bottom: none;
+        }
+
+        .regret-item input[type="checkbox"] {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 1.25rem;
+            height: 1.25rem;
+            border: 2px solid white;
+            border-radius: 0.25rem;
+            background-color: transparent;
+            cursor: pointer;
+            position: relative;
+            margin-right: 0.5rem;
+        }
+
+        .regret-item input[type="checkbox"]:checked {
+            background-color: #22c55e;
+            border-color: #22c55e;
+        }
+
+        .regret-item input[type="checkbox"]:checked::after {
+            content: '✓';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-size: 1rem;
+        }
+        
+        /* 遺憾清單文字顏色 */
+        .regret-text-completed {
+            color: #6b7280; /* gray-500 */
+        }
+    </style>
+</head>
+<body class="flex flex-col items-center justify-center p-4">
+    <!-- 背景星空 -->
+    <div class="stars z-0"></div>
+
+    <!-- 主遊戲畫面 -->
+    <div id="game-container" class="z-10 flex flex-col items-center justify-center w-full max-w-2xl px-4 py-8 text-center transition-all duration-500 ease-in-out transform scale-100">
+        <h1 class="text-3xl sm:text-4xl font-bold mb-2">令師歡喜，臨終無悔</h1>
+        <h2 class="text-sm sm:text-base font-medium mb-8 text-white/70">眼前最重要的是，做你該做的事情，才不會臨終憂悔</h2>
+        <div id="loading-indicator" class="text-white text-lg font-medium">正在連接雲端...</div>
+
+        <!-- 警語輪播 -->
+        <div class="h-16 flex items-center justify-center text-center mb-8">
+            <div id="warning-text" class="text-xl sm:text-2xl font-bold text-white transition-all duration-500 flex items-center justify-center"></div>
+        </div>
+
+        <!-- 計時器主體 -->
+        <div id="timer-box" class="p-4 sm:p-8 rounded-2xl border-4 border-red-500/50 transition-all duration-500 ease-in-out transform scale-100 relative timer-glow-soft">
+            <div class="absolute inset-0 rounded-2xl -z-10 blur-xl opacity-50 bg-red-500/30"></div>
+            <div id="countdown-display" class="text-4xl sm:text-5xl md:text-6xl font-black text-white transition-colors duration-500 whitespace-nowrap min-w-[300px] sm:min-w-[400px]">
+                <!-- 計時器顯示將由 JavaScript 動態生成 -->
+            </div>
+        </div>
+
+        <!-- 統計區塊 -->
+        <div id="stats-container" class="text-sm font-medium text-gray-400 mt-8 flex flex-col sm:flex-row justify-center space-y-2 sm:space-y-0 sm:space-x-4">
+            <p>早睡連續：<span id="good-streak">0</span> 天</p>
+            <p>晚睡連續：<span id="bad-streak">0</span> 天</p>
+            <p>今日狀態：<span id="today-status">未定</span></p>
+        </div>
+
+        <!-- 按鈕區 -->
+        <div class="flex flex-col sm:flex-row gap-4 sm:gap-6 mt-12 w-full justify-center">
+            <button id="bedtime-btn" class="bg-[#2d5225]/70 hover:bg-[#2d5225] text-white font-bold py-3 px-6 rounded-xl transition-all duration-300 transform hover:scale-105 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#2d5225]">我已經上床睡覺</button>
+            <button id="settings-btn" class="bg-[#545447]/70 hover:bg-[#545447] text-white font-bold py-3 px-6 rounded-xl transition-all duration-300 transform hover:scale-105 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#545447]">設定</button>
+            <button id="reset-btn" class="bg-[#6c1519]/70 hover:bg-[#6c1519] text-white font-bold py-3 px-6 rounded-xl transition-all duration-300 transform hover:scale-105 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#6c1519]">重製</button>
+        </div>
+        
+        <!-- 早睡鼓勵訊息 -->
+        <div id="bedtime-message" class="mt-8 text-2xl font-bold text-yellow-300 transition-all duration-500 ease-in-out opacity-0">好極了！依教奉行最勝供養！</div>
+
+        <!-- 遺憾清單區塊 -->
+        <div id="regret-container" class="mt-8 w-full max-w-xl p-6 rounded-xl bg-white/10 backdrop-blur-sm hidden">
+            <h3 class="text-lg sm:text-xl font-bold text-center mb-4">無法承受之遺憾</h3>
+            <div id="regret-list" class="space-y-3">
+                <!-- 遺憾項目將由 JavaScript 動態生成 -->
+            </div>
+        </div>
+    </div>
+
+    <!-- 懲罰彈窗 -->
+    <div id="punishment-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4">
+        <div class="punishment-popup bg-red-900 border-4 border-red-500 text-white p-8 rounded-xl max-w-md w-full text-center">
+            <p class="text-xl sm:text-2xl font-bold">不放掉低俗的貪著，是永遠看不到高層次的享受的</p>
+            <button id="punishment-close-btn" class="mt-6 bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-xl transition-all duration-300">確認</button>
+        </div>
+    </div>
+
+    <!-- 夜間警語 -->
+    <div id="night-warning-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4">
+        <div class="text-center text-red-500 font-bold text-3xl sm:text-4xl">死主就在我嬉戲時，悄然靠近</div>
+    </div>
+
+    <!-- 臨終結算畫面 -->
+    <div id="final-screen" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black transition-opacity duration-1000 p-4 opacity-0">
+        <p class="final-message-glow text-3xl sm:text-4xl md:text-5xl font-extrabold text-white text-center border-2 border-yellow-300/50 rounded-lg p-4 sm:p-6 shadow-xl backdrop-blur-sm">老師拼命換來的暇身，不是讓我這樣揮霍的！</p>
+    </div>
+
+    <!-- 設定彈窗 -->
+    <div id="settings-modal" class="modal fixed inset-0 z-40 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4">
+        <div class="bg-gray-900 border-2 border-gray-700 p-6 sm:p-8 rounded-2xl shadow-2xl max-w-xl w-full text-white transform transition-all duration-300">
+            <h3 class="text-2xl sm:text-3xl font-bold mb-6 text-center">設定</h3>
+            <div class="space-y-6">
+                 <div>
+                    <label for="regret-input" class="block text-sm font-medium text-gray-400 mb-2">無法承受之遺憾（一行一則）</label>
+                    <textarea id="regret-input" class="w-full p-3 rounded-lg bg-gray-800 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 h-24" placeholder="例如：沒有多陪家人，沒有完成我的夢想..."></textarea>
+                </div>
+                <div>
+                    <label for="initial-days" class="block text-sm font-medium text-gray-400 mb-2">初始壽命（天）</label>
+                    <input type="number" id="initial-days" class="w-full p-3 rounded-lg bg-gray-800 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500" value="7" min="1">
+                </div>
+                <div>
+                    <label for="bedtime-input" class="block text-sm font-medium text-gray-400 mb-2">上床目標時間</label>
+                    <input type="time" id="bedtime-input" class="w-full p-3 rounded-lg bg-gray-800 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                </div>
+                <div>
+                    <label for="warning-messages" class="block text-sm font-medium text-gray-400 mb-2">警句列表（一行一則）</label>
+                    <textarea id="warning-messages" class="w-full p-3 rounded-lg bg-gray-800 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 h-32"></textarea>
+                </div>
+                <div class="flex justify-end gap-4 mt-6">
+                    <button id="apply-settings-btn" class="bg-[#2d5225]/70 hover:bg-[#2d5225] text-white font-bold py-2 px-4 rounded-xl transition-all duration-300">套用</button>
+                    <button id="close-settings-btn" class="bg-gray-600/70 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded-xl transition-all duration-300">取消</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase SDKs -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInWithCustomToken, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, onSnapshot, setDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // Global variables provided by the Canvas environment
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {};
+        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+
+        // --- Firebase Initialization and State Management ---
+        
+        let app, db, auth, userId;
+        let isAuthReady = false;
+        
+        // UI elements
+        const loadingIndicator = document.getElementById('loading-indicator');
+        const gameContainer = document.getElementById('game-container');
+        gameContainer.style.display = 'none';
+
+        try {
+            app = initializeApp(firebaseConfig);
+            db = getFirestore(app);
+            auth = getAuth(app);
+
+            // Listen for authentication state changes
+            onAuthStateChanged(auth, async (user) => {
+                if (user) {
+                    // User is signed in.
+                    userId = user.uid;
+                    isAuthReady = true;
+                    console.log("Firebase Auth State Changed: Logged in with user ID:", userId);
+                    loadingIndicator.textContent = '載入中...';
+                    
+                    // Attach real-time listener to Firestore
+                    attachFirestoreListener();
+                } else {
+                    // User is signed out, sign in with the custom token or anonymously
+                    isAuthReady = false;
+                    try {
+                        if (initialAuthToken) {
+                            await signInWithCustomToken(auth, initialAuthToken);
+                        } else {
+                            await signInAnonymously(auth);
+                        }
+                    } catch (error) {
+                        console.error("Firebase authentication failed:", error);
+                        loadingIndicator.textContent = '認證失敗，請重新載入。';
+                    }
+                }
+            });
+        } catch (error) {
+            console.error("Failed to initialize Firebase:", error);
+            loadingIndicator.textContent = 'Firebase 初始化失敗，請檢查設定。';
+        }
+
+        function attachFirestoreListener() {
+            if (!isAuthReady) {
+                console.warn("Attempted to attach listener before auth is ready.");
+                return;
+            }
+            const userDocRef = doc(db, 'artifacts', appId, 'users', userId, 'countdown_data', 'user_document');
+            
+            // Real-time listener for user data
+            onSnapshot(userDocRef, (doc) => {
+                if (doc.exists()) {
+                    console.log("Document data received from Firestore.");
+                    const data = doc.data();
+                    loadData(data);
+                } else {
+                    console.log("No document found. Initializing new data.");
+                    resetGameData(false); // Reset without clearing local storage
+                }
+                loadingIndicator.style.display = 'none';
+                gameContainer.style.display = 'flex';
+            }, (error) => {
+                console.error("Firestore snapshot listener error:", error);
+                loadingIndicator.textContent = '從雲端載入資料失敗。';
+            });
+        }
+
+        // --- Core Application Logic (Modified for Firestore) ---
+
+        // DOM 元素
+        const countdownDisplay = document.getElementById('countdown-display');
+        const timerBox = document.getElementById('timer-box');
+        const warningText = document.getElementById('warning-text');
+        const bedtimeBtn = document.getElementById('bedtime-btn');
+        const bedtimeMessage = document.getElementById('bedtime-message');
+        const settingsBtn = document.getElementById('settings-btn');
+        const settingsModal = document.getElementById('settings-modal');
+        const closeSettingsBtn = document.getElementById('close-settings-btn');
+        const applySettingsBtn = document.getElementById('apply-settings-btn');
+        const resetBtn = document.getElementById('reset-btn');
+        const punishmentModal = document.getElementById('punishment-modal');
+        const punishmentCloseBtn = document.getElementById('punishment-close-btn');
+        const nightWarningModal = document.getElementById('night-warning-modal');
+        const finalScreen = document.getElementById('final-screen');
+
+        const goodStreakSpan = document.getElementById('good-streak');
+        const badStreakSpan = document.getElementById('bad-streak');
+        const todayStatusSpan = document.getElementById('today-status');
+        const regretContainer = document.getElementById('regret-container');
+        const regretList = document.getElementById('regret-list');
+
+        // 設定輸入框
+        const initialDaysInput = document.getElementById('initial-days');
+        const bedtimeInput = document.getElementById('bedtime-input');
+        const regretInput = document.getElementById('regret-input');
+        const warningMessagesInput = document.getElementById('warning-messages');
+
+        // 預設值
+        let initialLifeDays = 7;
+        let bedtimeTarget = '23:00';
+        let warningMessages = [
+            '老師拼命換來的暇身，不是讓我這樣揮霍的',
+            '死主就在我嬉戲時，悄然靠近',
+            '太晚睡，明天會更累，看時間，到了就晚安。',
+            '我重視的是你的功課：睡覺時間',
+            '十二點半了，小貓頭鷹今天應該沒出來遊行吧？',
+            '不要擔心。你善根深厚，做事也很勇悍，這問題不會困擾你太久的。',
+            '現階段看到自己有朝著目標進步，就是成功，因為不管速度快慢，繼續下去總會達標，這就是累積成功的因。'
+        ];
+        
+        // 狀態變數
+        let endDate = null;
+        let timerInterval = null;
+        let warningInterval = null;
+        let isNightMode = false;
+        let isPunishmentShown = false;
+        let currentWarningIndex = 0;
+        let isTimerActive = true;
+        let goodStreak = 0;
+        let badStreak = 0;
+        let lastRecordDate = null;
+        let regrets = [];
+
+        // --- 核心功能函數 ---
+
+        // 輔助函數：將日期設定為當天的午夜12點
+        function getTodayMidnight(date = new Date()) {
+            const midnight = new Date(date);
+            midnight.setHours(0, 0, 0, 0);
+            return midnight;
+        }
+
+        // 從 Firestore 載入數據
+        function loadData(data) {
+            // Unsubscribe from old listener if any to avoid issues
+            if (timerInterval) clearInterval(timerInterval);
+            if (warningInterval) clearInterval(warningInterval);
+
+            if (data.endDate) {
+                endDate = data.endDate.toDate();
+            } else {
+                const now = new Date();
+                endDate = new Date(now.getTime() + initialLifeDays * 24 * 60 * 60 * 1000);
+            }
+
+            bedtimeTarget = data.bedtimeTarget || '23:00';
+            warningMessages = data.warningMessages || [
+                '老師拼命換來的暇身，不是讓我這樣揮霍的',
+                '死主就在我嬉戲時，悄然靠近'
+            ];
+            goodStreak = data.goodStreak || 0;
+            badStreak = data.badStreak || 0;
+            lastRecordDate = data.lastRecordDate ? data.lastRecordDate.toDate() : null;
+            regrets = data.regrets || [];
+
+            isPunishmentShown = false;
+            
+            // Update UI with loaded data
+            initialDaysInput.value = Math.ceil((endDate.getTime() - Date.now()) / (1000 * 60 * 60 * 24));
+            bedtimeInput.value = bedtimeTarget;
+            warningMessagesInput.value = warningMessages.join('\n');
+            regretInput.value = regrets.map(r => r.text).join('\n');
+            
+            updateStats();
+            renderRegrets();
+            startCountdown();
+            startWarningRotation();
+        }
+
+        // 儲存數據到 Firestore
+        async function saveData() {
+            if (!isAuthReady) {
+                console.error("Cannot save data: user not authenticated.");
+                return;
+            }
+            try {
+                const userDocRef = doc(db, 'artifacts', appId, 'users', userId, 'countdown_data', 'user_document');
+                const dataToSave = {
+                    endDate,
+                    bedtimeTarget,
+                    warningMessages,
+                    goodStreak,
+                    badStreak,
+                    lastRecordDate,
+                    regrets
+                };
+                await setDoc(userDocRef, dataToSave, { merge: true });
+                console.log("Data successfully written to Firestore!");
+            } catch (e) {
+                console.error("Error writing document to Firestore: ", e);
+            }
+        }
+
+        // 更新統計數據
+        function updateStats() {
+            const today = getTodayMidnight();
+            const lastDate = lastRecordDate ? getTodayMidnight(lastRecordDate) : null;
+            
+            if (lastDate && lastDate.getTime() === today.getTime()) {
+                // 如果今天已經記錄過，狀態不變
+            } else {
+                // 如果是新的一天，重置狀態
+                todayStatusSpan.textContent = '未定';
+                todayStatusSpan.style.color = 'rgb(156 163 175)';
+                if (lastDate && today.getTime() - lastDate.getTime() > 24 * 60 * 60 * 1000) {
+                    goodStreak = 0;
+                    badStreak = 0;
+                }
+                saveData();
+            }
+            goodStreakSpan.textContent = goodStreak;
+            badStreakSpan.textContent = badStreak;
+        }
+
+        // 更新計時器顯示
+        function updateCountdown() {
+            const now = new Date().getTime();
+            const distance = endDate - now;
+
+            if (distance < 0) {
+                isTimerActive = false;
+                clearInterval(timerInterval);
+                clearInterval(warningInterval);
+                showFinalScreen();
+                return;
+            }
+
+            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+            // 格式化為 "天 時:分:秒"
+            const formattedHours = String(hours).padStart(2, '0');
+            const formattedMinutes = String(minutes).padStart(2, '0');
+            const formattedSeconds = String(seconds).padStart(2, '0');
+            
+            countdownDisplay.textContent = `${days} 天 ${formattedHours}:${formattedMinutes}:${formattedSeconds}`;
+
+            if (days < initialLifeDays) {
+                countdownDisplay.classList.remove('text-white');
+                countdownDisplay.classList.add('text-red-500');
+                timerBox.classList.remove('timer-glow-soft');
+                timerBox.classList.add('timer-glow-strong');
+            } else {
+                countdownDisplay.classList.remove('text-red-500');
+                countdownDisplay.classList.add('text-white');
+                timerBox.classList.remove('timer-glow-strong');
+                timerBox.classList.add('timer-glow-soft');
+            }
+        }
+        
+        // 啟動倒數計時
+        function startCountdown() {
+            if (!isTimerActive) return;
+            timerInterval = setInterval(() => {
+                updateCountdown();
+                checkNightMode();
+                checkBedtimePunishment();
+            }, 1000);
+            updateCountdown();
+        }
+
+        // 警語輪播
+        function startWarningRotation() {
+            if (warningMessages.length <= 1) {
+                warningText.textContent = warningMessages[0];
+                return;
+            }
+            
+            warningInterval = setInterval(() => {
+                warningText.classList.add('warning-fade-out');
+                setTimeout(() => {
+                    currentWarningIndex = (currentWarningIndex + 1) % warningMessages.length;
+                    warningText.textContent = warningMessages[currentWarningIndex];
+                    warningText.classList.remove('warning-fade-out');
+                    warningText.classList.add('warning-fade-in');
+                }, 1000);
+            }, 30000);
+            
+            warningText.textContent = warningMessages[0];
+        }
+
+        // 檢查夜間模式
+        function checkNightMode() {
+            const now = new Date();
+            const nowHours = now.getHours();
+            const nowMinutes = now.getMinutes();
+            
+            const isLate = (nowHours > 23 || (nowHours === 23 && nowMinutes >= 30));
+            const isEarlyMorning = nowHours >= 0 && nowHours < 5;
+
+            if ((isLate || isEarlyMorning) && !isNightMode) {
+                isNightMode = true;
+                document.body.style.backgroundColor = 'black';
+                document.body.classList.add('screen-shake-light');
+                setTimeout(() => { document.body.classList.remove('screen-shake-light'); }, 500);
+                timerBox.style.animationDuration = '0.7s';
+                
+                if (warningInterval) clearInterval(warningInterval);
+                warningText.style.display = 'none';
+                nightWarningModal.style.display = 'flex';
+                
+            } else if (!isLate && !isEarlyMorning && isNightMode) {
+                isNightMode = false;
+                document.body.style.backgroundColor = '';
+                document.body.style.background = 'radial-gradient(ellipse at bottom, #1B2735 0%, #090A0F 100%)';
+                timerBox.style.animationDuration = '1s';
+                
+                nightWarningModal.style.display = 'none';
+                warningText.style.display = 'flex';
+                if (warningMessages.length > 1) {
+                    startWarningRotation();
+                } else {
+                    warningText.textContent = warningMessages[0];
+                }
+            }
+        }
+
+        // 檢查晚睡懲罰
+        function checkBedtimePunishment() {
+            if (isPunishmentShown) return;
+            const now = new Date();
+            const [targetHours, targetMinutes] = bedtimeTarget.split(':').map(Number);
+            
+            const bedtime = new Date();
+            bedtime.setHours(targetHours, targetMinutes, 0, 0);
+
+            if (now > bedtime) {
+                isPunishmentShown = true;
+                punishmentModal.style.display = 'flex';
+                
+                if (navigator.vibrate) {
+                    navigator.vibrate([200, 100, 200]);
+                }
+                
+                const today = getTodayMidnight();
+                if (!lastRecordDate || today.getTime() > getTodayMidnight(lastRecordDate).getTime()) {
+                    badStreak++;
+                    goodStreak = 0;
+                    lastRecordDate = today;
+                    todayStatusSpan.textContent = '晚睡';
+                    todayStatusSpan.style.color = 'rgb(239 68 68)';
+                    saveData();
+                    updateStats();
+                }
+            }
+        }
+        
+        // 顯示臨終結算畫面
+        function showFinalScreen() {
+            document.getElementById('game-container').style.display = 'none';
+            finalScreen.style.display = 'flex';
+            setTimeout(() => {
+                finalScreen.style.opacity = '1';
+            }, 100);
+        }
+
+        // 重製遊戲
+        function resetGameData() {
+            const now = new Date();
+            const newEndDate = new Date(now.getTime() + initialLifeDays * 24 * 60 * 60 * 1000);
+            
+            const dataToReset = {
+                endDate: newEndDate,
+                bedtimeTarget: bedtimeTarget,
+                warningMessages: warningMessages,
+                goodStreak: 0,
+                badStreak: 0,
+                lastRecordDate: null,
+                regrets: []
+            };
+            
+            saveDataFromReset(dataToReset);
+        }
+
+        async function saveDataFromReset(data) {
+            if (!isAuthReady) {
+                console.error("Cannot save data: user not authenticated.");
+                return;
+            }
+            try {
+                const userDocRef = doc(db, 'artifacts', appId, 'users', userId, 'countdown_data', 'user_document');
+                await setDoc(userDocRef, data);
+                console.log("Data successfully reset and written to Firestore!");
+            } catch (e) {
+                console.error("Error writing document to Firestore: ", e);
+            }
+        }
+
+        // 渲染遺憾清單
+        function renderRegrets() {
+            if (regrets.length > 0) {
+                regretContainer.classList.remove('hidden');
+                
+                const sortedRegrets = [...regrets].sort((a, b) => a.completed - b.completed);
+
+                regretList.innerHTML = '';
+                sortedRegrets.forEach((item, index) => {
+                    const itemDiv = document.createElement('div');
+                    itemDiv.className = 'regret-item';
+                    itemDiv.innerHTML = `
+                        <div class="flex items-center text-left">
+                            <input type="checkbox" id="regret-${index}" ${item.completed ? 'checked' : ''}>
+                            <label for="regret-${index}" class="text-sm sm:text-base font-medium ${item.completed ? 'regret-text-completed' : ''}">${item.text}</label>
+                        </div>
+                        <span class="text-xs text-gray-400 whitespace-nowrap">${new Date(item.date).toLocaleDateString()}</span>
+                    `;
+                    regretList.appendChild(itemDiv);
+
+                    itemDiv.querySelector('input').addEventListener('change', (e) => {
+                        const originalRegret = regrets.find(r => r.text === item.text);
+                        if (originalRegret) {
+                            originalRegret.completed = e.target.checked;
+                        }
+                        
+                        saveData();
+                        renderRegrets();
+                    });
+                });
+            } else {
+                regretContainer.classList.add('hidden');
+            }
+        }
+
+        // --- 事件監聽 ---
+        
+        bedtimeBtn.addEventListener('click', () => {
+            const today = getTodayMidnight();
+            const isAlreadyRecorded = lastRecordDate && today.getTime() === getTodayMidnight(lastRecordDate).getTime();
+            
+            if (!isAlreadyRecorded) {
+                endDate = new Date(endDate.getTime() + 24 * 60 * 60 * 1000);
+                goodStreak++;
+                badStreak = 0;
+                lastRecordDate = today;
+                todayStatusSpan.textContent = '早睡';
+                todayStatusSpan.style.color = 'rgb(34 197 94)';
+                saveData();
+                updateCountdown();
+                updateStats();
+            }
+            
+            bedtimeMessage.style.opacity = '1';
+            bedtimeMessage.style.transform = 'scale(1.1)';
+            setTimeout(() => {
+                bedtimeMessage.style.opacity = '0';
+                bedtimeMessage.style.transform = 'scale(1)';
+            }, 2000);
+        });
+
+        settingsBtn.addEventListener('click', () => {
+            initialDaysInput.value = Math.ceil((endDate.getTime() - Date.now()) / (1000 * 60 * 60 * 24));
+            bedtimeInput.value = bedtimeTarget;
+            warningMessagesInput.value = warningMessages.join('\n');
+            regretInput.value = regrets.map(r => r.text).join('\n');
+            settingsModal.classList.add('open');
+        });
+
+        closeSettingsBtn.addEventListener('click', () => {
+            settingsModal.classList.remove('open');
+        });
+
+        applySettingsBtn.addEventListener('click', () => {
+            const newInitialLifeDays = parseInt(initialDaysInput.value, 10) || 7;
+            const newBedtimeTarget = bedtimeInput.value;
+            const newWarnings = warningMessagesInput.value.split('\n').filter(Boolean).map(s => s.trim());
+            const newRegrets = regretInput.value.split('\n').filter(Boolean).map(text => {
+                const existingRegret = regrets.find(r => r.text === text.trim());
+                if (existingRegret) {
+                    return existingRegret;
+                }
+                return { text: text.trim(), date: new Date().toISOString(), completed: false };
+            });
+            
+            const dataToSave = {
+                endDate: new Date(new Date().getTime() + newInitialLifeDays * 24 * 60 * 60 * 1000),
+                bedtimeTarget: newBedtimeTarget,
+                warningMessages: newWarnings,
+                regrets: newRegrets,
+                goodStreak: goodStreak,
+                badStreak: badStreak,
+                lastRecordDate: lastRecordDate,
+            };
+            
+            setDoc(doc(db, 'artifacts', appId, 'users', userId, 'countdown_data', 'user_document'), dataToSave);
+            
+            settingsModal.classList.remove('open');
+        });
+
+        punishmentCloseBtn.addEventListener('click', () => {
+            punishmentModal.style.display = 'none';
+        });
+
+        resetBtn.addEventListener('click', () => {
+            resetGameData();
+        });
+
+        // The initial load is handled by the onAuthStateChanged listener
+    </script>
+</body>
+</html>
